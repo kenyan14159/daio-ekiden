@@ -46,16 +46,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6">
           {/* Logo & Address */}
           <div className="md:col-span-2">
-            <Link href="/" className="inline-flex items-center gap-3 mb-2">
-              <Image
-                src="/images/daito-ekiden.png"
-                alt="大東文化大学 陸上競技部 男子長距離ブロック"
-                width={360}
-                height={63}
-                className="h-8 w-auto brightness-0 invert"
-              />
-              <span className="text-sm font-medium">大東文化大学 陸上競技部男子長距離ブロック</span>
-            </Link>
+
             <div className="flex items-start gap-2 text-[11px] text-white/70">
               <MapPin className="w-3 h-3 mt-0.5 flex-shrink-0" />
               <p>埼玉県東松山市大字西本宿1753 大東文化大学陸上競技部クラブハウス</p>
