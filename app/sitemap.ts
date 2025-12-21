@@ -1,5 +1,7 @@
 import { MetadataRoute } from 'next';
 
+export const dynamic = 'force-static';
+
 const BASE_URL = 'https://daito-ekiden.com';
 
 export default function sitemap(): MetadataRoute.Sitemap {

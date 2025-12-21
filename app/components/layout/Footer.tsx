@@ -50,8 +50,8 @@ export default function Footer() {
               <Image
                 src="/images/daito-ekiden.png"
                 alt="大東文化大学 陸上競技部 男子長距離ブロック"
-                width={160}
-                height={40}
+                width={360}
+                height={63}
                 className="h-8 w-auto brightness-0 invert"
               />
               <span className="text-sm font-medium">大東文化大学 陸上競技部男子長距離ブロック</span>

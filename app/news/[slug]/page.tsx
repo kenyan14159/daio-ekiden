@@ -1,10 +1,6 @@
-"use client";
-
-import { motion } from 'framer-motion';
-import Link from 'next/link';
-import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
+import fs from 'fs';
+import path from 'path';
+import NewsArticleView from './NewsArticleView';
 
 interface NewsArticle {
     id: string;
@@ -21,138 +17,30 @@ interface NewsData {
     articles: NewsArticle[];
 }
 
-function formatDate(dateStr: string): string {
-    const date = new Date(dateStr);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}.${month}.${day}`;
+async function getNewsData(): Promise<NewsData> {
+    const filePath = path.join(process.cwd(), 'public', 'data', 'news', 'news-2025.json');
+    const fileContents = await fs.promises.readFile(filePath, 'utf8');
+    return JSON.parse(fileContents);
 }
 
-export default function NewsDetailPage() {
-    const params = useParams();
-    const slug = params.slug as string;
-    const [article, setArticle] = useState<NewsArticle | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
+export async function generateStaticParams() {
+    const data = await getNewsData();
+    return data.articles.map((article) => ({
+        slug: article.slug,
+    }));
+}
 
-    useEffect(() => {
-        const loadData = async () => {
-            try {
-                const res = await fetch('/data/news/news-2025.json');
-                const data: NewsData = await res.json();
-                const found = data.articles.find(a => a.slug === slug);
-                setArticle(found || null);
-            } catch (error) {
-                console.error('Failed to load news data:', error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        loadData();
-    }, [slug]);
+// Next.js 15/16 uses Promise for params in dynamic routes
+type Props = {
+    params: Promise<{ slug: string }>;
+}
 
-    if (isLoading) {
-        return (
-            <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
-                <div className="w-8 h-8 border-2 border-neutral-200 border-t-daito-green rounded-full animate-spin" />
-            </div>
-        );
-    }
+export default async function NewsDetailPage(props: Props) {
+    const params = await props.params;
+    const { slug } = params;
 
-    if (!article) {
-        return (
-            <div className="min-h-screen bg-neutral-50">
-                <section className="relative py-20 md:py-32 bg-neutral-950 overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-daito-green/30 via-transparent to-daito-orange/20" />
-                    <div className="container mx-auto px-6 relative z-10">
-                        <div className="text-center">
-                            <h1 className="text-4xl md:text-6xl font-serif font-light text-white mb-4">
-                                記事が見つかりません
-                            </h1>
-                        </div>
-                    </div>
-                </section>
-                <section className="py-12 md:py-20">
-                    <div className="container mx-auto px-6 text-center">
-                        <Link
-                            href="/news"
-                            className="inline-flex items-center gap-2 text-daito-green hover:underline"
-                        >
-                            <ArrowLeft className="w-4 h-4" />
-                            ニュース一覧に戻る
-                        </Link>
-                    </div>
-                </section>
-            </div>
-        );
-    }
+    const data = await getNewsData();
+    const article = data.articles.find((a) => a.slug === slug) || null;
 
-    return (
-        <div className="min-h-screen bg-neutral-50">
-            {/* Hero Section */}
-            <section className="relative py-20 md:py-32 bg-neutral-950 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-daito-green/30 via-transparent to-daito-orange/20" />
-                <div className="container mx-auto px-6 relative z-10">
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8 }}
-                        className="max-w-3xl mx-auto text-center"
-                    >
-                        <div className="flex items-center justify-center gap-3 mb-6">
-                            <span className="px-3 py-1 bg-daito-green text-white text-xs font-medium rounded-full">
-                                {article.category}
-                            </span>
-                            <span className="text-white/60 text-sm">{formatDate(article.date)}</span>
-                        </div>
-                        <h1 className="text-2xl md:text-4xl lg:text-5xl font-serif font-light text-white leading-tight">
-                            {article.title}
-                        </h1>
-                    </motion.div>
-                </div>
-            </section>
-
-            {/* Content */}
-            <section className="py-12 md:py-20">
-                <div className="container mx-auto px-6">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6 }}
-                        className="max-w-3xl mx-auto"
-                    >
-                        {/* Back Link */}
-                        <Link
-                            href="/news"
-                            className="inline-flex items-center gap-2 text-neutral-500 hover:text-daito-green transition-colors mb-8"
-                        >
-                            <ArrowLeft className="w-4 h-4" />
-                            ニュース一覧に戻る
-                        </Link>
-
-                        {/* Article Content */}
-                        <article className="bg-white rounded-2xl border border-neutral-100 p-8 md:p-12 shadow-sm">
-                            <div className="prose prose-lg max-w-none">
-                                {article.content.split('\n\n').map((paragraph, index) => (
-                                    <p key={index} className="text-neutral-700 leading-relaxed mb-4">
-                                        {paragraph}
-                                    </p>
-                                ))}
-                            </div>
-                        </article>
-
-                        {/* Navigation */}
-                        <div className="mt-12 text-center">
-                            <Link
-                                href="/news"
-                                className="inline-flex items-center justify-center px-8 py-4 border border-neutral-200 rounded-full text-sm font-medium text-neutral-600 hover:border-daito-green hover:text-daito-green transition-all"
-                            >
-                                ニュース一覧に戻る
-                            </Link>
-                        </div>
-                    </motion.div>
-                </div>
-            </section>
-        </div>
-    );
+    return <NewsArticleView article={article} />;
 }
