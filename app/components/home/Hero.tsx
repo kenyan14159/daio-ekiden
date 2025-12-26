@@ -2,7 +2,7 @@
 
 import OptimizedImage from '@/app/components/ui/OptimizedImage';
 import { motion, useScroll, useTransform, Variants } from "framer-motion";
-import { useRef, useMemo, useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 
 // パーティクルの型定義
 interface Particle {
@@ -63,20 +63,27 @@ export default function Hero() {
     }),
   };
 
-  // パーティクルをメモ化（再計算を防ぐ）
-  const particles = useMemo<Particle[]>(() => {
-    if (prefersReducedMotion) return [];
+  // パーティクルをuseStateとuseEffectで生成（レンダリング中の不純関数呼び出しを回避）
+  const [particles, setParticles] = useState<Particle[]>([]);
+
+  useEffect(() => {
+    if (prefersReducedMotion) {
+      setParticles([]);
+      return;
+    }
     
-    return Array.from({ length: 10 }, (_, i) => ({
-      id: i,
-      width: Math.random() * 4 + 1,
-      height: Math.random() * 4 + 1,
-      top: Math.random() * 100,
-      left: Math.random() * 100,
-      duration: Math.random() * 10 + 10,
-      delay: Math.random() * 5,
-      opacity: Math.random() * 0.5 + 0.2,
-    }));
+    setParticles(
+      Array.from({ length: 10 }, (_, i) => ({
+        id: i,
+        width: Math.random() * 4 + 1,
+        height: Math.random() * 4 + 1,
+        top: Math.random() * 100,
+        left: Math.random() * 100,
+        duration: Math.random() * 10 + 10,
+        delay: Math.random() * 5,
+        opacity: Math.random() * 0.5 + 0.2,
+      }))
+    );
   }, [prefersReducedMotion]);
 
   return (

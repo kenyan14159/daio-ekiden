@@ -5,7 +5,11 @@ import { motion, useMotionValue, useSpring } from 'framer-motion';
 
 export default function CustomCursor() {
     const [isHovered, setIsHovered] = useState(false);
-    const [isPointerDevice, setIsPointerDevice] = useState(false);
+    // 初期状態を計算（useEffect内でのsetStateを回避）
+    const [isPointerDevice, setIsPointerDevice] = useState(() => {
+        if (typeof window === 'undefined') return false;
+        return window.matchMedia('(pointer: fine)').matches && !window.matchMedia('(hover: none)').matches;
+    });
     const cursorX = useMotionValue(-100);
     const cursorY = useMotionValue(-100);
 
@@ -20,11 +24,8 @@ export default function CustomCursor() {
             return window.matchMedia('(pointer: fine)').matches && !window.matchMedia('(hover: none)').matches;
         };
 
-        const isPointer = checkPointerDevice();
-        setIsPointerDevice(isPointer);
-
         // ポインターデバイスでない場合は早期リターン
-        if (!isPointer) {
+        if (!isPointerDevice) {
             return;
         }
 

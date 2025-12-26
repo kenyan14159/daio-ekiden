@@ -4,29 +4,29 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
 export default function OpeningLoader() {
-    const [isPresent, setIsPresent] = useState(true);
-
-    useEffect(() => {
-        // localStorageを使用して、一度表示したら24時間は表示しない
-        const lastVisit = typeof window !== 'undefined' ? localStorage.getItem('lastVisit') : null;
+    // 初期状態を計算（useEffect内でのsetStateを回避）
+    const [isPresent, setIsPresent] = useState(() => {
+        if (typeof window === 'undefined') return true;
+        const lastVisit = localStorage.getItem('lastVisit');
         const now = Date.now();
         const oneDay = 24 * 60 * 60 * 1000;
+        // 24時間以内の訪問の場合は初期状態をfalseに
+        return !(lastVisit && (now - parseInt(lastVisit)) < oneDay);
+    });
 
-        if (lastVisit && (now - parseInt(lastVisit)) < oneDay) {
-            setIsPresent(false);
-            return;
-        }
+    useEffect(() => {
+        if (!isPresent) return;
 
         // 初回訪問または24時間経過後は表示
         const timer = setTimeout(() => {
             setIsPresent(false);
             if (typeof window !== 'undefined') {
-                localStorage.setItem('lastVisit', now.toString());
+                localStorage.setItem('lastVisit', Date.now().toString());
             }
         }, 2000); // 2秒に短縮
 
         return () => clearTimeout(timer);
-    }, []);
+    }, [isPresent]);
 
     // ページ読み込みが完了したら即座に非表示にする
     useEffect(() => {

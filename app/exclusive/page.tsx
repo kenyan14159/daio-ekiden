@@ -8,7 +8,11 @@ const CORRECT_PASSWORD = process.env.NEXT_PUBLIC_EXCLUSIVE_PASSWORD || "1010";
 
 export default function ExclusivePage() {
   const [password, setPassword] = useState('');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // 初期状態を計算（useEffect内でのsetStateを回避）
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return sessionStorage.getItem('exclusive_auth') === 'true';
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -31,16 +35,6 @@ export default function ExclusivePage() {
     }
     setIsLoading(false);
   };
-
-  // Check sessionStorage on mount
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const auth = sessionStorage.getItem('exclusive_auth');
-      if (auth === 'true') {
-        setIsAuthenticated(true);
-      }
-    }
-  }, []);
 
   if (isAuthenticated) {
     return (
