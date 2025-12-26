@@ -30,7 +30,6 @@ export default function OptimizedImage({
   sizes = "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw",
   quality = 85,
 }: OptimizedImageProps) {
-  const [imgSrc, setImgSrc] = useState(src);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
@@ -40,7 +39,7 @@ export default function OptimizedImage({
         <div className="absolute inset-0 bg-neutral-100 animate-pulse" aria-hidden="true" />
       )}
       <Image
-        src={imgSrc}
+        src={src}
         alt={alt}
         width={width}
         height={height}

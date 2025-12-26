@@ -37,8 +37,12 @@ export function reportPerformanceMetric(
   if (typeof window === 'undefined') return;
 
   // Google Analytics 4（設定されている場合）
-  if ((window as any).gtag) {
-    (window as any).gtag('event', 'performance', {
+  interface WindowWithGtag extends Window {
+    gtag?: (command: string, targetId: string, config?: Record<string, unknown>) => void;
+  }
+  const windowWithGtag = window as WindowWithGtag;
+  if (windowWithGtag.gtag) {
+    windowWithGtag.gtag('event', 'performance', {
       metric_name: name,
       metric_value: Math.round(value),
       metric_unit: unit,
@@ -46,8 +50,12 @@ export function reportPerformanceMetric(
   }
 
   // Vercel Analytics（設定されている場合）
-  if ((window as any).va) {
-    (window as any).va('performance', {
+  interface WindowWithVa extends Window {
+    va?: (event: string, data?: Record<string, unknown>) => void;
+  }
+  const windowWithVa = window as WindowWithVa;
+  if (windowWithVa.va) {
+    windowWithVa.va('performance', {
       name,
       value: Math.round(value),
       unit,
@@ -76,19 +84,31 @@ export function reportWebVitalsMetric(metric: WebVitalsMetric) {
   reportPerformanceMetric(metric.name, metric.value, 'ms');
 
   // Vercel Analytics（本番環境で使用可能な場合）
-  if (typeof window !== 'undefined' && (window as any).va) {
-    (window as any).va('web-vitals', metric);
+  if (typeof window !== 'undefined') {
+    interface WindowWithVa extends Window {
+      va?: (event: string, data?: Record<string, unknown>) => void;
+    }
+    const windowWithVa = window as WindowWithVa;
+    if (windowWithVa.va) {
+      windowWithVa.va('web-vitals', metric);
+    }
   }
 
   // Google Analytics 4（設定されている場合）
-  if (typeof window !== 'undefined' && (window as any).gtag) {
-    (window as any).gtag('event', metric.name, {
-      value: Math.round(metric.value),
-      event_category: 'Web Vitals',
-      event_label: metric.id,
-      non_interaction: true,
-      rating: metric.rating,
-    });
+  if (typeof window !== 'undefined') {
+    interface WindowWithGtag extends Window {
+      gtag?: (command: string, targetId: string, config?: Record<string, unknown>) => void;
+    }
+    const windowWithGtag = window as WindowWithGtag;
+    if (windowWithGtag.gtag) {
+      windowWithGtag.gtag('event', metric.name, {
+        value: Math.round(metric.value),
+        event_category: 'Web Vitals',
+        event_label: metric.id,
+        non_interaction: true,
+        rating: metric.rating,
+      });
+    }
   }
 
   // 開発環境ではコンソールに出力

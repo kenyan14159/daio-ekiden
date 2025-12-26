@@ -178,20 +178,6 @@ function StaffCard({ staff, index }: { staff: Staff; index: number }) {
   );
 }
 
-function LoadingSkeleton() {
-  return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
-      {[...Array(10)].map((_, i) => (
-        <div key={i} className="bg-white rounded-xl border border-neutral-100 p-6 animate-pulse">
-          <div className="aspect-square bg-neutral-200 rounded-lg mb-4" />
-          <div className="h-4 bg-neutral-200 rounded w-3/4 mb-2" />
-          <div className="h-3 bg-neutral-200 rounded w-1/2" />
-        </div>
-      ))}
-    </div>
-  );
-}
-
 export default function MembersClient({ membersData, staffData }: MembersClientProps) {
   const [activeTab, setActiveTab] = useState('4year');
 
@@ -217,7 +203,7 @@ export default function MembersClient({ membersData, staffData }: MembersClientP
       <div className="sticky top-16 md:top-20 z-40 bg-white/95 backdrop-blur-md border-b border-neutral-100">
         <div className="container mx-auto px-6">
           <div className="flex justify-center py-4 gap-1">
-            {gradeData.map((grade, index) => (
+            {gradeData.map((grade) => (
               <button
                 key={grade.id}
                 onClick={() => setActiveTab(grade.id)}

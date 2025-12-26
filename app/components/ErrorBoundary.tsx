@@ -60,7 +60,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
         }).catch(() => {
           // エラーログ送信の失敗は無視（無限ループを防ぐ）
         });
-      } catch (e) {
+      } catch {
         // エラー送信自体が失敗した場合は無視
       }
     }

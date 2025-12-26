@@ -52,7 +52,7 @@ function MessageCard({ message, index }: { message: typeof messages[0]; index: n
         <div className="p-6 md:p-8">
           {/* Quote Icon */}
           <div className="text-6xl font-serif text-neutral-100 leading-none mb-4 group-hover:text-daito-green/20 transition-colors duration-300">
-            "
+            &ldquo;
           </div>
 
           {/* Content */}

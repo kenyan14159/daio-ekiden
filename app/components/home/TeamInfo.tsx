@@ -70,7 +70,7 @@ export default function TeamInfo() {
                     </h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-3xl mx-auto">
-                        {achievements.map((achievement, index) => (
+                        {achievements.map((achievement) => (
                             <div
                                 key={achievement.label}
                                 className="bg-neutral-50 rounded-lg p-4 border border-neutral-100"

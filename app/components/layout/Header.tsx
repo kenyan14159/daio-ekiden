@@ -4,7 +4,7 @@ import Link from 'next/link';
 import OptimizedImage from '@/app/components/ui/OptimizedImage';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navSections = [
