@@ -4,15 +4,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 
-interface NewsArticle {
-    id: string;
-    slug: string;
-    date: string;
-    category: string;
-    title: string;
-    excerpt: string;
-    content: string;
-}
+import { NewsArticle } from '@/lib/types';
 
 function formatDate(dateStr: string): string {
     const date = new Date(dateStr);
@@ -101,7 +93,7 @@ export default function NewsArticleView({ article }: NewsArticleViewProps) {
                         {/* Article Content */}
                         <article className="bg-white rounded-2xl border border-neutral-100 p-8 md:p-12 shadow-sm">
                             <div className="prose prose-lg max-w-none">
-                                {article.content.split('\n\n').map((paragraph, index) => (
+                                {(article.content || article.excerpt || '').split('\n\n').map((paragraph, index) => (
                                     <p key={index} className="text-neutral-700 leading-relaxed mb-4">
                                         {paragraph}
                                     </p>

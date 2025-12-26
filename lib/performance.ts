@@ -9,7 +9,7 @@ export interface WebVitalsMetric {
   id: string;
   name: string;
   value: number;
-  label: string;
+  label?: string;
   delta?: number;
   rating?: 'good' | 'needs-improvement' | 'poor';
 }
@@ -90,7 +90,7 @@ export function reportWebVitalsMetric(metric: WebVitalsMetric) {
     }
     const windowWithVa = window as WindowWithVa;
     if (windowWithVa.va) {
-      windowWithVa.va('web-vitals', metric);
+      windowWithVa.va('web-vitals', metric as any);
     }
   }
 
@@ -132,7 +132,7 @@ export function measureResourceTiming() {
 
   resources.forEach((resource) => {
     const duration = resource.responseEnd - resource.startTime;
-    
+
     // 遅いリソースを警告
     if (duration > 1000) {
       console.warn(
